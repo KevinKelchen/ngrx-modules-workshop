@@ -6,6 +6,10 @@ import { RatingService } from '../rating.service';
 
 import { ProductModel } from '../../model/product';
 import { ProductService } from '../product.service';
+import { Store } from "@ngrx/store";
+import { GlobalState } from "../product.reducer";
+import { productsOpened } from "./actions";
+import { selectProducts } from "../product.selector";
 
 @Component({
   selector: 'ngrx-workshop-home',
@@ -13,16 +17,19 @@ import { ProductService } from '../product.service';
   styleUrls: ['./product-list.component.scss'],
 })
 export class ProductListComponent implements OnInit {
-  products$?: Observable<ProductModel[]>;
+  // Assumption that if undefined, no data yet.
+  products$?: Observable<ProductModel[] | undefined> = this.store.select(selectProducts);
   customerRatings$?: Observable<{ [productId: string]: Rating }>;
 
   constructor(
     private readonly productService: ProductService,
-    private readonly ratingService: RatingService
+    private readonly ratingService: RatingService,
+    private readonly store: Store<GlobalState>
   ) {}
 
   ngOnInit() {
-    this.products$ = this.productService.getProducts();
+    // Invoke action as function.
+    this.store.dispatch(productsOpened());
 
     this.customerRatings$ = this.ratingService.getRatings().pipe(
       map((ratingsArray) =>
