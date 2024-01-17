@@ -12,6 +12,7 @@ import { productReducer } from "./product/product.reducer";
 import { EffectsModule } from "@ngrx/effects";
 import { ProductEffects } from "./product/product.effects";
 import * as errorEffects from './error.effects';
+import { CartModule } from "./cart/cart.module";
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,7 +24,8 @@ import * as errorEffects from './error.effects';
     MatToolbarModule,
     StoreModule.forRoot({ product: productReducer }),
     StoreDevtoolsModule.instrument(),
-    EffectsModule.forRoot(ProductEffects, errorEffects)
+    EffectsModule.forRoot(ProductEffects, errorEffects),
+    CartModule
   ],
   bootstrap: [AppComponent],
 })
