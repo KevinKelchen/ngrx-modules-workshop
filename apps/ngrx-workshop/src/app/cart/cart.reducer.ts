@@ -1,6 +1,7 @@
 import { CartItem } from "@angular-monorepo/api-interfaces";
 import { createReducer, on } from "@ngrx/store";
 import { productDetailsActions } from "../product/product-details/actions";
+import { cartActions } from "./actions";
 
 // 1. Feature key since using Feature State for slicing
 export const CART_FEATURE_KEY = 'cart';
@@ -40,6 +41,12 @@ export const cartReducer = createReducer(
       ...state,
       cartItems: cartItemsClone
     };
+}),
+on(cartActions.fetchCartItemsSuccess, (state, { cartItems }) => {
+  return {
+    ...state,
+    cartItems: [...cartItems]
+  };
 }));
 
 // 8. Create selectors for feature using `createFeatureSelector()` and state key

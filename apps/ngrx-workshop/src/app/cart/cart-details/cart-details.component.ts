@@ -6,6 +6,9 @@ import { Router } from '@angular/router';
 import { CartProduct } from '../../model/product';
 import { ProductService } from '../../product/product.service';
 import { CartService } from '../cart.service';
+import { Store } from "@ngrx/store";
+import { cartDetailsActions } from "./actions";
+import { selectCartItems } from "../cart.selectors";
 
 @Component({
   selector: 'ngrx-workshop-cart-details',
@@ -13,9 +16,9 @@ import { CartService } from '../cart.service';
   styleUrls: ['./cart-details.component.scss'],
 })
 export class CartDetailsComponent {
-  cartProducts$: Observable<CartProduct[]> = this.cartService.cartItems$.pipe(
+  cartProducts$: Observable<CartProduct[]> = /*this.cartService.cartItems$*/ this.store.select(selectCartItems).pipe(
     switchMap((cartItems) =>
-      from(cartItems).pipe(
+      from(cartItems ?? []).pipe(
         mergeMap((item) =>
           this.productService
             .getProduct(item.productId)
@@ -41,9 +44,11 @@ export class CartDetailsComponent {
     private readonly cartService: CartService,
     private readonly productService: ProductService,
     private readonly snackBar: MatSnackBar,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly store: Store
   ) {
-    this.cartService.getCartProducts();
+    // this.cartService.getCartProducts();
+    this.store.dispatch(cartDetailsActions.pageOpened());
   }
 
   removeOne(id: string) {
@@ -62,7 +67,8 @@ export class CartDetailsComponent {
       // 👇 really important not to forget to subscribe
       .subscribe((isSuccess) => {
         if (isSuccess) {
-          this.cartService.getCartProducts();
+          // this.cartService.getCartProducts();
+          this.store.dispatch(cartDetailsActions.purchaseSuccess());
           this.router.navigateByUrl('');
         } else {
           this.snackBar.open('Purchase error', 'Error', {
