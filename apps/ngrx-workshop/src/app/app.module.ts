@@ -9,6 +9,9 @@ import { CartIconModule } from './cart/cart-icon/cart-icon.module';
 import { RoutingModule } from './router/routing.module';
 import { StoreModule } from "@ngrx/store";
 import { productReducer } from "./product/product.reducer";
+import { EffectsModule } from "@ngrx/effects";
+import { ProductEffects } from "./product/product.effects";
+import * as errorEffects from './error.effects';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +23,7 @@ import { productReducer } from "./product/product.reducer";
     MatToolbarModule,
     StoreModule.forRoot({ product: productReducer }),
     StoreDevtoolsModule.instrument(),
+    EffectsModule.forRoot(ProductEffects, errorEffects)
   ],
   bootstrap: [AppComponent],
 })
