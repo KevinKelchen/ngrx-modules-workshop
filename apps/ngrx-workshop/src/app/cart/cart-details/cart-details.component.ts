@@ -7,7 +7,7 @@ import { CartProduct } from '../../model/product';
 import { ProductService } from '../../product/product.service';
 import { CartService } from '../cart.service';
 import { Store } from '@ngrx/store';
-import { selectCartItems } from '../cart.selectors';
+import { cartDetailsVm, selectCartItems } from '../cart.selectors';
 import { cartDetailsActions } from './actions';
 
 @Component({
@@ -16,31 +16,36 @@ import { cartDetailsActions } from './actions';
   styleUrls: ['./cart-details.component.scss'],
 })
 export class CartDetailsComponent {
-  cartProducts$: Observable<CartProduct[]> = this.store
-    .select(selectCartItems)
-    .pipe(
-      switchMap((cartItems) =>
-        from(cartItems ?? []).pipe(
-          mergeMap((item) =>
-            this.productService
-              .getProduct(item.productId)
-              .pipe(map((product) => ({ ...product, quantity: item.quantity })))
-          ),
-          toArray()
-        )
-      )
-    );
+  cartDetailsVm$: Observable<{
+    products?: CartProduct[];
+    total?: number;
+  }> = this.store.select(cartDetailsVm);
 
-  total$ = this.cartProducts$.pipe(
-    map(
-      (cartProducts) =>
-        cartProducts &&
-        cartProducts.reduce(
-          (acc, product) => acc + product.price * product.quantity,
-          0
-        )
-    )
-  );
+  // cartProducts$: Observable<CartProduct[]> = this.store
+  //   .select(selectCartItems)
+  //   .pipe(
+  //     switchMap((cartItems) =>
+  //       from(cartItems ?? []).pipe(
+  //         mergeMap((item) =>
+  //           this.productService
+  //             .getProduct(item.productId)
+  //             .pipe(map((product) => ({ ...product, quantity: item.quantity })))
+  //         ),
+  //         toArray()
+  //       )
+  //     )
+  //   );
+
+  // total$ = this.cartProducts$.pipe(
+  //   map(
+  //     (cartProducts) =>
+  //       cartProducts &&
+  //       cartProducts.reduce(
+  //         (acc, product) => acc + product.price * product.quantity,
+  //         0
+  //       )
+  //   )
+  // );
 
   constructor(
     private readonly cartService: CartService,
