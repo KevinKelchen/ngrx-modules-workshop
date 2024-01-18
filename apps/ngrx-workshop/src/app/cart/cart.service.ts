@@ -11,10 +11,11 @@ export class CartService {
 
   constructor(private readonly http: HttpClient) {}
 
-  addProduct(id: string): void {
-    this.http
-      .post<CartItem[]>(`/api/cart/add/${id}`, {})
-      .subscribe((arr) => this.cartItemsSubject$.next(arr));
+  addProduct(id: string): Observable<CartItem[]> {
+    return this.http
+      .post<CartItem[]>(`/api/cart/add/${id}`, {});
+      // .subscribe((arr) => this.cartItemsSubject$.next(arr));
+      // Was trying to abstract HttpClient and keep state; too much for one service
   }
 
   removeProduct(id: string): void {
