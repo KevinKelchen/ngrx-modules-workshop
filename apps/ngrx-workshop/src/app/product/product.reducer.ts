@@ -21,6 +21,21 @@ export const productFeature = createFeature({
     on(productApiActions.productsFetchedError, (state) => ({
       ...state,
       products: [],
-    }))
+    })),
+    on(productApiActions.singleProductFetchedSuccess, (state, { product }) => {
+      const productsClone = state.products ? [...state.products] : [];
+      const indexOfProduct = productsClone.findIndex(p => p.id === product.id);
+
+      if (indexOfProduct < 0) {
+        productsClone.push(product);
+      } else {
+        productsClone.splice(indexOfProduct, 1, product);
+      }
+
+      return {
+        ...state,
+        products: productsClone
+      };
+    }),
   ),
 });
